@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Boat Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin: 10px;
+        }
+
+        body {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #status {
+            font-size: 20px;
+            margin: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+
+        #triggers {
+            margin: 20px;
+            font-family: monospace;
+        }
+
+        .main-display {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .rotation-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #rotation {
+            font-size: 20px;
+            padding: 10px;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 100px;
+        }
+
+        .control-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: x-large;
+        }
+
+        .control-box>button {
+            font-weight: bold;
+            font-size: x-large;
+            border: 2px solid black;
+        }
+
+        .thruster {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-box {
+            width: 100px;
+            height: 10px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        #left-thruster,
+        #right-thruster {
+            width: 0%;
+            height: 100%;
+            background: #04AA6D;
+        }
+
+        #both-on {
+            background-color: green;
+        }
+
+        #both-on:active {
+            background-color: darkgreen;
+        }
+
+        #both-off {
+            background-color: red;
+        }
+
+        #both-off:active {
+            background-color: darkred;
+        }
+
+        #pid:active {
+            background-color: darkgray;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Boat Control</h1>
+        <button id="connect" type="button" onclick="handleConnect()">Connect to Server</button>
+        <div class="main-display">
+            <div class="rotation-display">
+                <span id="rotation">Rotation: -°</span>
+                <svg id="ship" width="800px" height="800px" viewBox="-0.03 0 20.053 20.053"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(-2 -1.974)">
+                        <path id="secondary" fill="#2ca9bc"
+                            d="M9,7.74a5.49,5.49,0,0,1,2.45-4.57h0a1,1,0,0,1,1.1,0h0A5.49,5.49,0,0,1,15,7.74v8.52a5.49,5.49,0,0,1-2.45,4.57h0a1,1,0,0,1-1.1,0h0A5.49,5.49,0,0,1,9,16.26Z" />
+                        <path id="primary"
+                            d="M9,7.74a5.49,5.49,0,0,1,2.45-4.57h0a1,1,0,0,1,1.1,0h0A5.49,5.49,0,0,1,15,7.74v8.52a5.49,5.49,0,0,1-2.45,4.57h0a1,1,0,0,1-1.1,0h0A5.49,5.49,0,0,1,9,16.26ZM5,12H19m2,1H20a1,1,0,0,1-1-1h0a1,1,0,0,1,1-1h1ZM3,11H4a1,1,0,0,1,1,1H5a1,1,0,0,1-1,1H3Z"
+                            fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2" />
+                        <rect x="11.5" y="2.5" width="1" height="1" fill="#ff0000" stroke-width="1" />
+                    </g>
+                </svg>
+            </div>
+            <div class="controls">
+                <div class="thrusters-container">
+                    <div class="thruster">
+                        <h2>Left Thruster:</h2>
+                        <p><span id="leftspan">0</span>%</p>
+                        <div class="slider-box">
+                            <div id="left-thruster"></div>
+                        </div>
+                    </div>
+                    <div class="thruster">
+                        <h2>Right Thruster:</h2>
+                        <p><span id="rightspan">0</span>%</p>
+                        <div class="slider-box">
+                            <div id="right-thruster"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-box">
+                    <h2>Auto Drive</h2>
+                    <button id="pid" type="button" onclick="handleAutoDrive()">
+                        Turn on Auto Drive
+                    </button>
+                </div>
+                <div class="control-box">
+                    <h2>Manual Control</h2>
+                    <button id="both-on" type="button" onclick="handleStraight()">
+                        Turn Both Motor ON
+                    </button>
+                    <button id="both-off" type="button" onclick="handleStop()">
+                        Turn Both Motor OFF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function sendServer(uri, params = {}) {
+            try {
+                const response = await fetch(uri, params);
+                if (response.status !== 200) {
+                    console.error(`Failed to fetch:${response.text}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function receiveServer(uri) {
+            try {
+                const response = await fetch(uri);
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    console.error(`Failed to fetch:${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function updateSpeed(leftSpeed, rightSpeed) {
+            if (leftSpeed <= 100) {
+                leftSpeed = 0;
+            }
+
+            if (rightSpeed <= 100) {
+                rightSpeed = 0;
+            }
+
+            const data = {
+                left: leftSpeed,
+                right: rightSpeed
+            };
+
+            sendServer('/speed', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+        }
+
+        function handleAutoDrive() {
+            sendServer('/goStraightWithPID');
+        }
+
+        async function getRotation() {
+            const data = await receiveServer('/getHeading');
+            if (data) {
+                const rotation = data.heading;
+                const rotationElement = document.getElementById("rotation");
+                rotationElement.textContent = `Rotation: ${rotation}°`;
+                const ship = document.getElementById("ship");
+                ship.style.transform = `rotate(${rotation}deg)`;
+            }
+        }
+
+        function handleConnect() {
+            setInterval(updateLoop, 200);
+        }
+
+        function handleStraight() {
+            updateSpeed(255, 255);
+        }
+
+        function handleStop() {
+            sendServer('/stop');
+        }
+
+        function getThrusters() {
+            receiveServer('/getThrusters').then(data => {
+                if (!data) {
+                    return;
+                }
+                const leftSpeed = Math.round(data.left / 255 * 100);
+                const rightSpeed = Math.round(data.right / 255 * 100);
+
+                const leftThruster = document.getElementById("left-thruster");
+                const rightThruster = document.getElementById("right-thruster");
+                leftThruster.style.width = `${leftSpeed}%`;
+                rightThruster.style.width = `${rightSpeed}%`;
+
+                const leftSpan = document.getElementById("leftspan");
+                const rightSpan = document.getElementById("rightspan");
+                leftSpan.textContent = leftSpeed;
+                rightSpan.textContent = rightSpeed;
+            });
+        }
+
+        function updateLoop() {
+            getThrusters();
+            getRotation();
+        }
+
+    </script>
+</body>
+
+</html>
