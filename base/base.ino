@@ -2,14 +2,14 @@
 #include <LoRa.h>
 #include <WiFi.h>
 #include <WebServer.h>
-#include <WebPage.h>
+// #include <WebPage.h>
 
 #define ss 15       // Chip Select
 #define rst 16      // Reset
 #define dio0 17      // IRQ
 
 // WiFi credentials
-const char *ssid = "Meng's Sub";
+const char *ssid = "Submarine go ọc ọc";
 const char *password = "1234567890";
 
 // Define HSPI pins
@@ -19,7 +19,7 @@ const char *password = "1234567890";
 
 // Create an SPIClass instance for HSPI
 SPIClass hspi(HSPI);
-
+ 
 // LoRa frequency
 #define LORA_FREQUENCY 433E6
 #define SECURITY_PHRASE "Meng"  // Security phrase to identify messages
