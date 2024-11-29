@@ -5,9 +5,6 @@
 #include <Adafruit_BNO055.h>
 #include "esp_task_wdt.h" // Include ESP32 task watchdog library
 
-#define LORA_FREQUENCY 433E6
-#define SECURITY_PHRASE "Meng"
-
 #define I2C_SDA 21
 #define I2C_SCL 22
 #define ss 15   // LoRa Chip Select
@@ -33,7 +30,7 @@ int M4_Right = 34;
 #define pumpOutPin 19
 
 // Security phrase for command validation
-#define SECURITY_PHRASE "Meng"
+#define SECURITY_PHRASE "MengVAnhNadine"
 
 // LoRa frequency
 #define LORA_FREQUENCY 433E6

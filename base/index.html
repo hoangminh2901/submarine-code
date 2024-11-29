@@ -120,6 +120,14 @@
             align-items: center;
             gap: 10px;
         }
+
+        #stop {
+            background-color: red;
+        }
+
+        #stop:active {
+            background-color: rgb(149, 0, 0);
+        }
     </style>
 </head>
 
@@ -149,29 +157,33 @@
                     <div>
                         <div>
                             Left
-                            <button id="left"> < </button>
+                            <button id="left" onclick="sendServer('/turnLeft')"> < </button>
                         </div>
                         <div>
                             <div>
                                 Forward
-                                <button id="forwad">^</button>
+                                <button id="forwad" onclick="sendServer('/forward')">^</button>
                             </div>
 
                             <div>
-                                <button id="back">v</button>
+                                <button id="stop" onclick="sendServer('/stop')">O</button>
+                            </div>
+
+                            <div>
+                                <button id="back" onclick="sendServer('/backward')">v</button>
                                 Back
                             </div>
                         </div>
                         <div>
-                            <button id="right">></button>
+                            <button id="right" onclick="sendServer('/turnRight')">></button>
                             Right
                         </div>
                     </div>
                 </div>
                 <div class="pump-box">
                     <h2>Pump Control</h2>
-                    <button id="up">Up (Pump Out)</button>
-                    <button id="down">Down (Pump In)</button>
+                    <button id="up" onclick="sendServer('/pumpOut')">Up (Pump Out)</button>
+                    <button id="down" onclick="sendServer('/pumpIn')">Down (Pump In)</button>
                 </div>
             </div>
         </div>
@@ -201,33 +213,6 @@
             }
         }
 
-        function updateSpeed(leftSpeed, rightSpeed) {
-            if (leftSpeed <= 100) {
-                leftSpeed = 0;
-            }
-
-            if (rightSpeed <= 100) {
-                rightSpeed = 0;
-            }
-
-            const data = {
-                left: leftSpeed,
-                right: rightSpeed
-            };
-
-            sendServer('/speed', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
-        }
-
-        function handleAutoDrive() {
-            sendServer('/goStraightWithPID');
-        }
-
         async function getRotation() {
             const data = await receiveServer('/getHeading');
             if (data) {
@@ -243,37 +228,7 @@
             setInterval(updateLoop, 200);
         }
 
-        function handleStraight() {
-            updateSpeed(255, 255);
-        }
-
-        function handleStop() {
-            sendServer('/stop');
-        }
-
-        function getThrusters() {
-            receiveServer('/getThrusters').then(data => {
-                if (!data) {
-                    return;
-                }
-                const leftSpeed = Math.round(data.left / 255 * 100);
-                const rightSpeed = Math.round(data.right / 255 * 100);
-
-                const leftThruster = document.getElementById("left-thruster");
-                const rightThruster = document.getElementById("right-thruster");
-                leftThruster.style.width = `${leftSpeed}%`;
-                rightThruster.style.width = `${rightSpeed}%`;
-
-                const leftSpan = document.getElementById("leftspan");
-                const rightSpan = document.getElementById("rightspan");
-                leftSpan.textContent = leftSpeed;
-                rightSpan.textContent = rightSpeed;
-            });
-        }
-
         function updateLoop() {
-            getThrusters();
-            getRotation();
         }
 
     </script>
