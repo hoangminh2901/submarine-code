@@ -2,7 +2,7 @@
 #include <LoRa.h>
 #include <WiFi.h>
 #include <WebServer.h>
-// #include <WebPage.h>
+#include <WebPage.h>
 
 #define ss 15       // Chip Select
 #define rst 16      // Reset
@@ -19,7 +19,7 @@ const char *password = "1234567890";
 
 // Create an SPIClass instance for HSPI
 SPIClass hspi(HSPI);
- 
+
 // LoRa frequency
 #define LORA_FREQUENCY 433E6
 #define SECURITY_PHRASE "Meng"  // Security phrase to identify messages
@@ -94,30 +94,30 @@ void loop() {
 
 // Web UI handler
 void handle_OnConnect() {
-  String page = "<!DOCTYPE html><html>";
-  page += "<head><title>Base Station Control</title>";
-  page += "<meta charset='UTF-8'>";
-  page += "<style>body {font-family: Arial, sans-serif; text-align: center; margin-top: 50px;}";
-  page += "button {padding: 10px 20px; font-size: 18px; margin: 10px;}</style></head>";
-  page += "<body><h1>Base Station Control</h1>";
+  // String page = "<!DOCTYPE html><html>";
+  // page += "<head><title>Base Station Control</title>";
+  // page += "<meta charset='UTF-8'>";
+  // page += "<style>body {font-family: Arial, sans-serif; text-align: center; margin-top: 50px;}";
+  // page += "button {padding: 10px 20px; font-size: 18px; margin: 10px;}</style></head>";
+  // page += "<body><h1>Base Station Control</h1>";
 
-  // Control buttons
-  page += "<p><button onclick='setCommand(\"/forward\")' style='background-color: #4CAF50;'>Forward</button></p>";
-  page += "<p><button onclick='setCommand(\"/backward\")' style='background-color: #f44336;'>Backward</button></p>";
-  page += "<p><button onclick='setCommand(\"/turnRight\")' style='background-color: #2196F3;'>Turn Right</button></p>";
-  page += "<p><button onclick='setCommand(\"/turnLeft\")' style='background-color: #FF9800;'>Turn Left</button></p>";
-  page += "<p><button onclick='setCommand(\"/pumpIn\")' style='background-color: #2196F3;'>Pump In</button></p>";
-  page += "<p><button onclick='setCommand(\"/pumpOut\")' style='background-color: #FF9800;'>Pump Out</button></p>";
-  page += "<p><button onclick='setCommand(\"/stop\")' style='background-color: #f44336;'>Stop</button></p>";
+  // // Control buttons
+  // page += "<p><button onclick='setCommand(\"/forward\")' style='background-color: #4CAF50;'>Forward</button></p>";
+  // page += "<p><button onclick='setCommand(\"/backward\")' style='background-color: #f44336;'>Backward</button></p>";
+  // page += "<p><button onclick='setCommand(\"/turnRight\")' style='background-color: #2196F3;'>Turn Right</button></p>";
+  // page += "<p><button onclick='setCommand(\"/turnLeft\")' style='background-color: #FF9800;'>Turn Left</button></p>";
+  // page += "<p><button onclick='setCommand(\"/pumpIn\")' style='background-color: #2196F3;'>Pump In</button></p>";
+  // page += "<p><button onclick='setCommand(\"/pumpOut\")' style='background-color: #FF9800;'>Pump Out</button></p>";
+  // page += "<p><button onclick='setCommand(\"/stop\")' style='background-color: #f44336;'>Stop</button></p>";
 
-  // JavaScript for handling button clicks
-  page += "<script>";
-  page += "function setCommand(path) { fetch(path); }";
-  page += "</script>";
-  page += "</body></html>";
-  server.send(200, "text/html", page);
+  // // JavaScript for handling button clicks
+  // page += "<script>";
+  // page += "function setCommand(path) { fetch(path); }";
+  // page += "</script>";
+  // page += "</body></html>";
+  // server.send(200, "text/html", page);
 
-  // server.send(200, "text/html", PAGE_MAIN);
+  server.send(200, "text/html", PAGE_MAIN);
 }
 
 void setCommand(String command) {

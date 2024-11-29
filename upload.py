@@ -7,7 +7,6 @@ for board in boards:
         continue
 
     if board == "base":
-        input(f"Ready to upload {board}?")
         print(f"Uploading {board}...")
         print("Copy index.html to WebPage.h...")
         with open(f"{board}/index.html", "r") as html_file:
