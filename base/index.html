@@ -17,9 +17,13 @@
         }
 
         button {
-            padding: 10px 20px;
+            padding: 10px;
             font-size: 18px;
             margin: 10px;
+        }
+
+        button:active {
+            background-color: #afafaf;
         }
 
         body {
@@ -68,7 +72,8 @@
             gap: 100px;
         }
 
-        .control-box {
+        .direction-box,
+        .pump-box {
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -77,53 +82,43 @@
             font-size: x-large;
         }
 
-        .control-box>button {
+        .direction-box button,
+        .pump-box button {
             font-weight: bold;
             font-size: x-large;
             border: 2px solid black;
         }
 
-        .thruster {
+        .direction-box button {
+            width: 50px;
+            height: 50px;
+        }
+
+        .direction-box>div {
             display: flex;
-            justify-content: space-between;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .direction-box>div>div {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
             align-items: center;
             gap: 10px;
         }
 
-        .slider-box {
-            width: 100px;
-            height: 10px;
-            background: #d3d3d3;
-            outline: none;
-            opacity: 0.7;
-            transition: opacity 0.2s;
+        .direction-box>div>div:nth-child(2) {
+            flex-direction: column;
         }
 
-        #left-thruster,
-        #right-thruster {
-            width: 0%;
-            height: 100%;
-            background: #04AA6D;
-        }
-
-        #both-on {
-            background-color: green;
-        }
-
-        #both-on:active {
-            background-color: darkgreen;
-        }
-
-        #both-off {
-            background-color: red;
-        }
-
-        #both-off:active {
-            background-color: darkred;
-        }
-
-        #pid:active {
-            background-color: darkgray;
+        .direction-box>div>div:nth-child(2)>div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
     </style>
 </head>
@@ -149,36 +144,35 @@
                 </svg>
             </div>
             <div class="controls">
-                <div class="thrusters-container">
-                    <div class="thruster">
-                        <h2>Left Thruster:</h2>
-                        <p><span id="leftspan">0</span>%</p>
-                        <div class="slider-box">
-                            <div id="left-thruster"></div>
+                <div class="direction-box">
+                    <h2>Direction Control</h2>
+                    <div>
+                        <div>
+                            Left
+                            <button id="left">
+                                < </button>
                         </div>
-                    </div>
-                    <div class="thruster">
-                        <h2>Right Thruster:</h2>
-                        <p><span id="rightspan">0</span>%</p>
-                        <div class="slider-box">
-                            <div id="right-thruster"></div>
+                        <div>
+                            <div>
+                                Forward
+                                <button id="forwad">^</button>
+                            </div>
+
+                            <div>
+                                <button id="back">v</button>
+                                Back
+                            </div>
+                        </div>
+                        <div>
+                            <button id="right">></button>
+                            Right
                         </div>
                     </div>
                 </div>
-                <div class="control-box">
-                    <h2>Auto Drive</h2>
-                    <button id="pid" type="button" onclick="handleAutoDrive()">
-                        Turn on Auto Drive
-                    </button>
-                </div>
-                <div class="control-box">
-                    <h2>Manual Control</h2>
-                    <button id="both-on" type="button" onclick="handleStraight()">
-                        Turn Both Motor ON
-                    </button>
-                    <button id="both-off" type="button" onclick="handleStop()">
-                        Turn Both Motor OFF
-                    </button>
+                <div class="pump-box">
+                    <h2>Pump Control</h2>
+                    <button id="up">Up (Pump Out)</button>
+                    <button id="down">Down (Pump In)</button>
                 </div>
             </div>
         </div>
